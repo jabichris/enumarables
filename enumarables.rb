@@ -96,22 +96,31 @@ module Enumerable
     end
     arr
   end
-end
 
-def my_inject(accumulator = nil, value_given = nil)
-  return symbol_logic(value_given, accumulator) if accumulator.class == Integer && !value_given.nil?
-  return symbol_logic(accumulator, 0) if accumulator.class == Symbol
+  def my_inject(*arg)
+    final_value = nil
+    operation = nil
 
-  each do |x|
-    accumulator = if accumulator.class == Integer
-                    yield(accumulator, x)
-                  elsif accumulator.nil?
-                    x
-                  else
-                    yield(accumulator, x)
-                  end
+    if arg.length == 2
+      final_value = arg[0]
+      operation = arg[1]
+      my_each do |element|
+        final_value = final_value.send(operation, element)
+      end
+    elsif arg[0].is_a? Symbol
+      operation = arg[0]
+      my_each do |element|
+        final_value = (final_value ? final_value.send(operation, element) : element)
+      end
+    else
+      final_value = arg[0]
+      my_each do |element|
+        final_value = (final_value ? yield(final_value, element) : element)
+      end
+    end
+
+    final_value
   end
-  accumulator
 end
 
 def symbol_logic(symbol, accumulator)
@@ -162,3 +171,9 @@ def none_check(pattern, exponent)
   end
   true
 end
+
+def multiply_els(arr)
+  arr.my_inject(1) { |product, num| product * num }
+end
+
+p multiply_els([2, 4, 5])
