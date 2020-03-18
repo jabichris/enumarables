@@ -44,19 +44,16 @@ module Enumerable
   end
 
   def my_any?(pattern = nil)
-    if !block_given?
-      my_any? { |x| pattern.nil? ? x : x =~ pattern }
-    elsif is_a? Hash
-      my_each do |x|
+    my_each do |x|
+      if block_given?
+        my_any? { |item| pattern.nil? ? item : item =~ pattern }
+      elsif is_a? Hash
         return true if yield(x[0], x[1])
+      elsif x
+        return true
       end
-      false
-    else
-      my_each do |x|
-        return true if yield(x)
-      end
-      false
     end
+    false
   end
 
   def my_none?(pattern = nil)
@@ -179,4 +176,5 @@ def multiply_els(arr)
   arr.my_inject(1) { |product, num| product * num }
 end
 
-p %w[dog door rod blade].my_any?(/d/)
+p [1, 'a', 'b', 'c'].my_any?(Integer)
+p %w[dog door rod blade].my_any?('dog')
