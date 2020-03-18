@@ -1,6 +1,6 @@
-# enumarables
+# enumerables
 
-This project is an implementation of enumarables method in Ruby.
+This project is an implementation of enumerables method in Ruby.
 
 ## Built With
 
