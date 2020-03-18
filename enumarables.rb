@@ -1,3 +1,4 @@
+# rubocop:disable Style/CaseEquality, Metrics/ModuleLength, Style/For, Lint/RedundantCopDisableDirective
 module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
@@ -41,16 +42,19 @@ module Enumerable
   end
 
   def my_any?(pattern = nil)
-    my_each do |x|
-      if !block_given?
-        my_any? { |item| pattern.nil? ? item : item =~ pattern }
-      elsif is_a? Hash
+    if !block_given?
+      my_any? { |item| pattern.nil? ? item : pattern === item }
+    elsif is_a? Hash
+      my_each do |x|
         return true if yield(x[0], x[1])
-      elsif x
-        return true
       end
+      false
+    else
+      my_each do |x|
+        return true if yield(x)
+      end
+      false
     end
-    false
   end
 
   def my_none?(pattern = nil)
@@ -172,3 +176,5 @@ end
 def multiply_els(arr)
   arr.my_inject(1) { |product, num| product * num }
 end
+
+# rubocop:enable Style/CaseEquality, Metrics/ModuleLength, Style/For, Lint/RedundantCopDisableDirective
