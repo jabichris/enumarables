@@ -2,12 +2,9 @@ module Enumerable
   def my_each
     return to_enum(:my_each) unless block_given?
 
-    index = 0
-    while index < size
-      yield(self[index])
-      index += 1
+    each do |element|
+      yield(element)
     end
-    self
   end
 
   def my_each_with_index(given_index = nil)
@@ -178,3 +175,4 @@ end
 
 p [1, 'a', 'b', 'c'].my_any?(Integer)
 p %w[dog door rod blade].my_any?('dog')
+p multiply_els(1..5)
